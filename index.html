@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Block Blast - Multiplayer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div id="app">
+        <!-- Main Menu -->
+        <div id="menu-screen" class="screen active">
+            <div class="title-container">
+                <h1 class="title-block">BLOCK</h1>
+                <h1 class="title-blast">BLAST</h1>
+                <p class="subtitle">Multiplayer Edition</p>
+            </div>
+
+            <div class="menu-section">
+                <label>GAME MODE</label>
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="endless">
+                        <span class="icon">∞</span>
+                        <span>Endless</span>
+                    </button>
+                    <button class="mode-btn" data-mode="timed">
+                        <span class="icon">⏱</span>
+                        <span>Timed</span>
+                    </button>
+                    <button class="mode-btn" data-mode="moves">
+                        <span class="icon">🎯</span>
+                        <span>Moves</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <label>DIFFICULTY</label>
+                <div class="difficulty-selector">
+                    <button class="diff-btn" data-diff="easy">Easy</button>
+                    <button class="diff-btn active" data-diff="medium">Medium</button>
+                    <button class="diff-btn" data-diff="hard">Hard</button>
+                    <button class="diff-btn" data-diff="expert">Expert</button>
+                </div>
+            </div>
+
+            <button id="play-btn" class="primary-btn">
+                <span>▶</span> PLAY
+            </button>
+
+            <button id="multiplayer-btn" class="secondary-btn">
+                <span>👥</span> MULTIPLAYER
+            </button>
+
+            <div class="high-score">
+                Best: <span id="high-score-display">0</span>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <button id="pause-btn" class="icon-btn">⏸</button>
+                <div class="score-display">
+                    <div class="score-label">SCORE</div>
+                    <div id="score">0</div>
+                </div>
+                <div class="level-display">
+                    <div class="score-label">LEVEL</div>
+                    <div id="level">1</div>
+                </div>
+            </div>
+
+            <div class="game-status">
+                <div id="status-indicator"></div>
+                <div id="blocks-cleared">
+                    <span>🧊</span> <span id="cleared-count">0</span>
+                </div>
+            </div>
+
+            <div id="game-container">
+                <canvas id="game-canvas"></canvas>
+                <div id="combo-popup" class="hidden"></div>
+                <div id="score-popup" class="hidden"></div>
+                <div id="freeze-overlay" class="hidden">
+                    <div class="freeze-content">
+                        <span class="freeze-icon">❄️</span>
+                        <div>FROZEN!</div>
+                        <div id="freeze-timer">3.0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="power-ups-bar">
+                <button class="power-up-btn" data-power="bomb" title="Bomb - Clear 3x3">
+                    <span class="power-icon">💥</span>
+                    <span class="power-count" id="bomb-count">1</span>
+                </button>
+                <button class="power-up-btn" data-power="lightning" title="Lightning - Clear Row">
+                    <span class="power-icon">⚡</span>
+                    <span class="power-count" id="lightning-count">1</span>
+                </button>
+                <button class="power-up-btn" data-power="rainbow" title="Rainbow - Clear Color">
+                    <span class="power-icon">🌈</span>
+                    <span class="power-count" id="rainbow-count">0</span>
+                </button>
+                <button class="power-up-btn" data-power="shuffle" title="Shuffle Board">
+                    <span class="power-icon">🔀</span>
+                    <span class="power-count" id="shuffle-count">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Multiplayer Screen -->
+        <div id="multiplayer-screen" class="screen">
+            <div class="mp-header">
+                <div class="player-score">
+                    <div class="player-label">YOU</div>
+                    <div id="mp-my-score">0</div>
+                </div>
+                <div class="vs-badge">VS</div>
+                <div class="player-score opponent">
+                    <div class="player-label" id="opponent-name">OPPONENT</div>
+                    <div id="mp-opponent-score">0</div>
+                </div>
+            </div>
+
+            <div class="mp-boards">
+                <div class="mp-board-container main">
+                    <canvas id="mp-game-canvas"></canvas>
+                </div>
+                <div class="mp-board-container opponent">
+                    <div class="opponent-label">Opponent</div>
+                    <canvas id="opponent-canvas"></canvas>
+                </div>
+            </div>
+
+            <div class="power-ups-bar mp">
+                <button class="power-up-btn" data-power="bomb">
+                    <span class="power-icon">💥</span>
+                    <span class="power-count" id="mp-bomb-count">1</span>
+                </button>
+                <button class="power-up-btn" data-power="lightning">
+                    <span class="power-icon">⚡</span>
+                    <span class="power-count" id="mp-lightning-count">1</span>
+                </button>
+                <button class="power-up-btn" data-power="freeze">
+                    <span class="power-icon">❄️</span>
+                    <span class="power-count" id="mp-freeze-count">1</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Matchmaking Screen -->
+        <div id="matchmaking-screen" class="screen">
+            <h2>MULTIPLAYER</h2>
+            <div class="matchmaking-status">
+                <div id="searching-indicator" class="hidden">
+                    <div class="spinner"></div>
+                    <p>Finding opponent...</p>
+                </div>
+                <div id="waiting-indicator" class="hidden">
+                    <p>Waiting for players...</p>
+                    <p class="room-code">Room: <span id="room-code"></span></p>
+                </div>
+            </div>
+
+            <div class="matchmaking-options">
+                <button id="quick-match-btn" class="primary-btn">
+                    <span>⚡</span> QUICK MATCH
+                </button>
+                <div class="divider">or</div>
+                <div class="room-join">
+                    <input type="text" id="room-input" placeholder="Enter Room Code" maxlength="6">
+                    <button id="join-room-btn" class="secondary-btn">JOIN</button>
+                </div>
+                <button id="create-room-btn" class="secondary-btn">
+                    CREATE PRIVATE ROOM
+                </button>
+            </div>
+
+            <button id="back-to-menu-btn" class="text-btn">← Back to Menu</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameover-screen" class="screen">
+            <h2 id="gameover-title">GAME OVER</h2>
+            <div id="new-high-score" class="hidden">🏆 NEW HIGH SCORE!</div>
+
+            <div class="final-score">
+                <div class="score-label">FINAL SCORE</div>
+                <div id="final-score">0</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-icon">⭐</span>
+                    <span id="final-level">1</span>
+                    <span class="stat-label">Level</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🧊</span>
+                    <span id="final-cleared">0</span>
+                    <span class="stat-label">Cleared</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🔥</span>
+                    <span id="final-combo">0</span>
+                    <span class="stat-label">Best Combo</span>
+                </div>
+            </div>
+
+            <button id="play-again-btn" class="primary-btn">
+                <span>🔄</span> PLAY AGAIN
+            </button>
+            <button id="menu-btn" class="secondary-btn">
+                <span>🏠</span> MAIN MENU
+            </button>
+        </div>
+
+        <!-- Pause Modal -->
+        <div id="pause-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>PAUSED</h2>
+                <div class="pause-score">Score: <span id="pause-score">0</span></div>
+                <button id="resume-btn" class="primary-btn">RESUME</button>
+                <button id="quit-btn" class="secondary-btn">QUIT</button>
+            </div>
+        </div>
+
+        <!-- Multiplayer Result Modal -->
+        <div id="mp-result-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="mp-result-title">VICTORY!</h2>
+                <div class="mp-final-scores">
+                    <div>You: <span id="mp-final-my-score">0</span></div>
+                    <div>Opponent: <span id="mp-final-opponent-score">0</span></div>
+                </div>
+                <button id="mp-rematch-btn" class="primary-btn">FIND NEW MATCH</button>
+                <button id="mp-menu-btn" class="secondary-btn">MAIN MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/game.js" type="module"></script>
+</body>
+</html>

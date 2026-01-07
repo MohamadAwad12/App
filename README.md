@@ -1,101 +1,105 @@
-# Block Blast - Multiplayer iOS Game
+# Block Blast - Multiplayer Web Game
 
-A fun and addictive multiplayer block-matching puzzle game built with SwiftUI and GameKit.
+A fun and addictive multiplayer block-matching puzzle game that runs in any browser.
+
+## Play Now
+
+Simply open `index.html` in your browser to play!
+
+Or start a local server:
+```bash
+# Using Python
+python -m http.server 8000
+
+# Using Node.js
+npx serve
+```
+
+Then open http://localhost:8000
 
 ## Features
 
 ### Game Modes
-- **Endless Mode**: Play until no valid moves remain
-- **Timed Mode**: Score as high as possible in 2 minutes
+- **Endless**: Play until no valid moves remain
+- **Timed**: Score as high as possible in 2 minutes
 - **Limited Moves**: Clear blocks strategically in 30 moves
-- **Multiplayer**: Real-time 1v1 battles via Game Center
+- **Multiplayer**: Real-time 1v1 battles (requires server)
 
 ### Gameplay
-- Tap groups of 2 or more same-colored blocks to clear them
+- Tap/click groups of 2+ same-colored blocks to clear them
 - Blocks fall down to fill gaps, new blocks spawn from top
-- Build combos by clearing blocks in quick succession
-- Earn power-ups by clearing large groups
+- Build combos by clearing blocks quickly
+- Earn power-ups by clearing large groups (7+ blocks)
 
 ### Power-ups
-- **Bomb** 💥: Clears a 3x3 area
-- **Lightning** ⚡: Clears an entire row
-- **Rainbow** ✨: Clears all blocks of one color
-- **Shuffle** 🔀: Shuffles your board
-- **Freeze** ❄️: Freezes opponent (multiplayer only)
+- 💥 **Bomb**: Clears a 3x3 area
+- ⚡ **Lightning**: Clears an entire row
+- 🌈 **Rainbow**: Clears all blocks of one color
+- 🔀 **Shuffle**: Shuffles your board
+- ❄️ **Freeze**: Freezes opponent (multiplayer only)
 
 ### Difficulty Levels
-- **Easy**: 4 colors, 8x6 grid
-- **Medium**: 5 colors, 10x8 grid
-- **Hard**: 6 colors, 10x8 grid
-- **Expert**: 6 colors, 12x10 grid
-
-## Requirements
-
-- iOS 17.0+
-- Xcode 15.0+
-- Swift 5.9+
-- Game Center account (for multiplayer)
+| Level  | Grid Size | Colors |
+|--------|-----------|--------|
+| Easy   | 8×6       | 4      |
+| Medium | 10×8      | 5      |
+| Hard   | 10×8      | 6      |
+| Expert | 12×10     | 6      |
 
 ## Project Structure
 
 ```
 BlockBlast/
-├── BlockBlastApp.swift      # App entry point
-├── ContentView.swift        # Main navigation view
-├── Models/
-│   ├── Block.swift          # Block and color definitions
-│   ├── GameGrid.swift       # Grid management and logic
-│   └── GameState.swift      # Score, level, power-ups
-├── Views/
-│   ├── MainMenuView.swift   # Main menu UI
-│   ├── GameView.swift       # Single-player game screen
-│   ├── GameBoardView.swift  # Block grid rendering
-│   ├── GameOverView.swift   # Game over screen
-│   ├── MultiplayerGameView.swift  # Multiplayer game screen
-│   └── MatchmakingView.swift      # Finding opponents
-├── ViewModels/
-│   └── GameManager.swift    # Game state management
-├── Multiplayer/
-│   └── MultiplayerManager.swift  # GameKit integration
-├── Utilities/
-│   ├── HapticsManager.swift # Haptic feedback
-│   └── SoundManager.swift   # Sound effects
-└── Assets.xcassets/         # App icons and colors
+├── index.html          # Main HTML file
+├── manifest.json       # PWA manifest
+├── css/
+│   └── style.css      # All styles
+├── js/
+│   └── game.js        # Game logic
+└── assets/            # Icons and images
 ```
 
-## Setup
+## Technical Details
 
-1. Open `BlockBlast.xcodeproj` in Xcode
-2. Select your development team in project settings
-3. Update the bundle identifier if needed
-4. Build and run on a device or simulator
+- **Pure JavaScript**: No frameworks or dependencies
+- **Canvas API**: Smooth block rendering and animations
+- **Web Audio API**: Sound effects
+- **LocalStorage**: High score persistence
+- **PWA Ready**: Can be installed as an app
+- **Mobile Friendly**: Touch controls and responsive design
 
-## Game Center Setup
+## Controls
 
-To enable multiplayer functionality:
+- **Mouse/Touch**: Click or tap blocks to clear them
+- **Power-ups**: Click power-up buttons then click target location
 
-1. Enable Game Center capability in Xcode
-2. Create a Game Center group in App Store Connect
-3. Add leaderboard with ID: `blockblast_multiplayer`
-4. Configure match rules for 2-player matches
+## Multiplayer Setup
 
-## Architecture
+For real multiplayer functionality, you'll need a WebSocket server:
 
-- **SwiftUI**: Modern declarative UI framework
-- **MVVM Pattern**: Clean separation of concerns
-- **GameKit**: Apple's multiplayer gaming framework
-- **Combine**: Reactive state management
+1. Set up a Node.js server with Socket.io
+2. Update the `Multiplayer.connect()` function in `game.js`
+3. Implement room management and state synchronization
 
-## Customization
+## Converting to iOS App
 
-### Adding New Block Colors
-Edit `BlockColor` enum in `Block.swift` to add new colors.
+To package as an iOS app, use Capacitor:
 
-### Adjusting Difficulty
-Modify `Difficulty` enum in `GameState.swift` to change grid sizes and color counts.
+```bash
+npm init -y
+npm install @capacitor/core @capacitor/cli @capacitor/ios
+npx cap init "Block Blast" com.blockblast.game
+npx cap add ios
+npx cap sync
+npx cap open ios
+```
 
-### Adding Sound Effects
-Place audio files in bundle and register them in `SoundManager.swift`.
+## Browser Support
+
+- Chrome 60+
+- Firefox 55+
+- Safari 11+
+- Edge 79+
 
 ## License
 
